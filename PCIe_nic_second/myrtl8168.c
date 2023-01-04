@@ -47,43 +47,9 @@ struct myrtl8168_nic {
 static int myrtl8168_probe(struct pci_dev *dev, const struct pci_device_id *id) {
 	struct myrtl8168_nic *my_data;
 	int status;
-	/*read datas from configure space */
-	u16 vid, did;
-	u8 capability_ptr;
-	u32 bar0, saved_bar0;
-
 
 	printk("myrtl8168 - Now I am in the probe function.\n");
-	/* read DID VID from the configure space */
-	if(0 != pci_read_config_word(dev, 0x0, &vid)) {
-		printk("myrtl8168 - Error reading from config space\n");
-		return -1;
-	}
-	printk("myrtl8168 - VID; 0x%x\n", vid);
-	if(0 != pci_read_config_word(dev, 0x2, &did)) {
-		printk("myrtl8168 - Error reading from config space\n");
-		return -1;
-	}
-	printk("myrtl8168 - DID; 0x%x\n", did);
 
-	/* Read the pci capability pointer for PCI extenal capability(detail about PCIe capability) */
-	printk("myrtl8168 - VID; 0x%x\n", vid);
-	if(0 != pci_read_config_byte(dev, 0x34, &capability_ptr)) {
-		printk("myrtl8168 - Error reading from config space\n");
-		return -1;
-	}
-	if(capability_ptr)
-	{ 
-		printk("myrtl8168 - PCI card has a PCIe capabilities!\n");
-	}
-	else
-		printk("myrtl8168 - PCI card doesn't have a PCIe capabilities!\n");
-
-
-	if(0 != pci_read_config_dword(dev, 0x10, &bar0)) {
-		printk("myrtl8168 - Error reading from config space\n");
-		return -1;
-	}
 	status = pci_resource_len(dev, 0);
 	printk("myrtl8168 - BAR0 is %d bytes in size\n", status);
 	if(status != 256) {
@@ -166,8 +132,3 @@ static void __exit my_exit(void) {
 
 module_init(my_init);
 module_exit(my_exit);
-
-/*
-if you want to find the capability, you can reference the below link.
-https://elixir.bootlin.com/linux/v5.15/source/include/uapi/linux/pci_regs.h#L218
-*/
